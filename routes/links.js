@@ -10,4 +10,8 @@ router.get('/', async (req, res, next) => {
   //res.send('LINKS!!!');
 });
 
+router.get('/add', (req, res) => {
+  res.render('links/add')
+})
+
 module.exports = router;
