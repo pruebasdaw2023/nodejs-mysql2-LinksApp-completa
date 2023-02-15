@@ -5,17 +5,34 @@ const pool = require('../database')
 
 /* GET users listing. */
 router.get('/', async (req, res, next) => {
-  const [ result ] = await pool.query('SELECT 1 + 1')
-  res.json(result)
-  //res.send('LINKS!!!');
+  const [ links ] = await pool.query('SELECT * FROM links')
+  console.log(links)
+  res.render('links/list', { links })
+  
 });
 
 router.get('/add', (req, res) => {
   res.render('links/add')
 })
 
-router.post('/add', (req, res) => {
-  res.send('Received')
+router.post('/add', async (req, res) => {
+
+  const { title, url, description } = req.body
+  const newLink = {
+    title,
+    url,
+    description
+  }
+
+  await pool.query('INSERT INTO links SET ?', [newLink])
+  res.redirect('/links')
+})
+
+
+router.get('/delete/:id', async (req, res) => {
+  const { id } = req.params
+  await pool.query('DELETE FROM links WHERE id = ?', [id])
+  res.redirect('/links')
 })
 
 module.exports = router;
