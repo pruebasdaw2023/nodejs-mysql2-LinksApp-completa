@@ -2,23 +2,24 @@ const express = require('express');
 const { authenticate } = require('passport');
 const router = express.Router();
 const passport = require('passport')
+const { isLoggedIn, isNotLogged }= require('../lib/auth')
 
 /* GET users listing. */
-router.get('/signup', (req, res, next) => {
+router.get('/signup',isNotLogged, (req, res, next) => {
   res.render('auth/signup');
 });
 
-router.post('/signup', passport.authenticate('local.signup', {
+router.post('/signup',isNotLogged, passport.authenticate('local.signup', {
   successRedirect: '/profile',
   failureRedirect: '/signup',
   failureFlash: true
 }))
 
-router.get('/signin', (req, res) => {
+router.get('/signin',isNotLogged, (req, res) => {
   res.render('auth/signin')
 })
 
-router.post('/signin', (req, res, next) => {
+router.post('/signin',isNotLogged, (req, res, next) => {
   passport.authenticate('local.signin', {
     successRedirect: '/profile',
     failureRedirect: '/signin',
@@ -26,11 +27,11 @@ router.post('/signin', (req, res, next) => {
   })(req, res, next)
 })
 
-router.get('/profile', (req, res) => {
+router.get('/profile', isLoggedIn, (req, res) => {
   res.render('profile')
 })
 
-router.get('/logout', (req, res) => {  
+router.get('/logout',isLoggedIn, (req, res) => {  
   req.logOut(function(err){
     if (err) return next(err)
   })  
